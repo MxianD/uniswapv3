@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.14;
 
-import "solmate/token/ERC20.sol";
+import "../lib/solmate/src/tokens/ERC20.sol";
 
 contract ERC20Mintable is ERC20{
     constructor(
