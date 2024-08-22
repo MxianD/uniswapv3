@@ -1,23 +1,43 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.14;
+
 import "../src/UniswapV3Pool.sol";
 import "../src/interfaces/IERC20.sol";
 
-contract UniswapV3Manager{
+contract UniswapV3Manager {
     function mint(
         address poolAddress_,
         int24 lowerTick,
         int24 upperTick,
         uint128 liquidity,
         bytes calldata data
-    )public returns(uint256, uint256){
-        return UniswapV3Pool(poolAddress_).mint(msg.sender, lowerTick, upperTick, liquidity, data);
+    ) public returns (uint256, uint256) {
+        return
+            UniswapV3Pool(poolAddress_).mint(
+                msg.sender,
+                lowerTick,
+                upperTick,
+                liquidity,
+                data
+            );
     }
 
-    function swap(address poolAddress_, bytes calldata data) public returns(int256, int256){
-        return UniswapV3Pool(poolAddress_).swap(msg.sender, data);
+    function swap(
+        address poolAddress_,
+        bool zeroForOne,
+        uint256 amountSpecified,
+        bytes calldata data
+    ) public returns (int256, int256) {
+        return
+            UniswapV3Pool(poolAddress_).swap(
+                msg.sender,
+                zeroForOne,
+                amountSpecified,
+                data
+            );
     }
-      function uniswapV3MintCallback(
+
+    function uniswapV3MintCallback(
         uint256 amount0,
         uint256 amount1,
         bytes calldata data
