@@ -2,7 +2,7 @@
 pragma solidity ^0.8.14;
 
 import "./FixedPoint96.sol";
-import "prb-math/PRBMath.sol";
+import "../../lib/prb-math/contracts/PRBMath.sol";
 
 library Math {
     function calcAmount0Delta(
