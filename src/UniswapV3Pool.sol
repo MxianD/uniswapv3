@@ -153,7 +153,7 @@ contract UniswapV3Pool is IUniswapV3Pool {
                 amount
             );
 
-            liquidity = LiquidityMath.addLiquidity(liquidity, int128(amount)); // TODO: amount is negative when removing liquidity
+            liquidity = LiquidityMath.addLiquidity(liquidity, int128(amount)); 
         } else {
             amount1 = Math.calcAmount1Delta(
                 TickMath.getSqrtRatioAtTick(lowerTick),
