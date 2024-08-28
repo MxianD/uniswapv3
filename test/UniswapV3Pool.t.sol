@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.14;
 
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 import "./ERC20Mintable.sol";
 import "./UniswapV3Pool.Utils.t.sol";
 
@@ -10,7 +10,7 @@ import "../src/lib/LiquidityMath.sol";
 import "../src/lib/TickMath.sol";
 import "../src/UniswapV3Pool.sol";
 
-import "forge-std/console.sol";
+import "../lib/forge-std/src/console.sol";
 
 contract UniswapV3PoolSwapsTest is Test, UniswapV3PoolUtils {
     ERC20Mintable token0;
@@ -778,34 +778,28 @@ contract UniswapV3PoolSwapsTest is Test, UniswapV3PoolUtils {
     // CALLBACKS
     //
     ////////////////////////////////////////////////////////////////////////////
-    function uniswapV3SwapCallback(
-        int256 amount0,
-        int256 amount1,
-        bytes calldata data
-    ) public {
-        if (transferInSwapCallback) {
-            IUniswapV3Pool.CallbackData memory cbData = abi.decode(
-                data,
-                (IUniswapV3Pool.CallbackData)
-            );
+function uniswapV3SwapCallback(
+    int256 amount0,
+    int256 amount1,
+    bytes calldata data_
+) public {
+    SwapCallbackData memory data = abi.decode(data_, (SwapCallbackData));
+    (address tokenIn, address tokenOut, ) = data.path.decodeFirstPool();
 
-            if (amount0 > 0) {
-                IERC20(cbData.token0).transferFrom(
-                    cbData.payer,
-                    msg.sender,
-                    uint256(amount0)
-                );
-            }
+    bool zeroForOne = tokenIn < tokenOut;
 
-            if (amount1 > 0) {
-                IERC20(cbData.token1).transferFrom(
-                    cbData.payer,
-                    msg.sender,
-                    uint256(amount1)
-                );
-            }
-        }
+    int256 amount = zeroForOne ? amount0 : amount1;
+
+    if (data.payer == address(this)) {
+        IERC20(tokenIn).transfer(msg.sender, uint256(amount));
+    } else {
+        IERC20(tokenIn).transferFrom(
+            data.payer,
+            msg.sender,
+            uint256(amount)
+        );
     }
+}
 
     function uniswapV3MintCallback(
         uint256 amount0,
